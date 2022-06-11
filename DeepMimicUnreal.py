@@ -69,7 +69,7 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['socket/run_amp_heading_humanoid3d_locomotion_args.txt', 'socket/run_amp_humanoid3d_roll_args.txt']
+    policy = ['socket/run_amp_heading_humanoid3d_locomotion_args.txt']#, 'socket/run_amp_humanoid3d_roll_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)

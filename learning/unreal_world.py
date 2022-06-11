@@ -16,7 +16,7 @@ class UnrealRL(object):
         self.int_output_path = []
 
     def build_agents(self):
-        num_agents = 2
+        num_agents = 1
         agent_files = []
         model_files = []
 
