@@ -18,20 +18,28 @@ def build_arg_parser(filename):
 
 def convert_data_to_float(data):
     global agentNum
+    global needNewAction
     dataArray = data.split(" ")
 
-    agentNum = int(dataArray.pop(0))
+    isNeedAction = int(dataArray.pop(0))
+    if(isNeedAction):
+        needNewAction = True
+        agentNum = int(dataArray.pop(0))
 
-    StateArray = []
-    GoalArray = []
-    for dataidx in range(226):
-        StateArray.append(float(dataArray[dataidx]))
-    for dataidx in range(226,229):
-        GoalArray.append(float(dataArray[dataidx]))
+        StateArray = []
+        GoalArray = []
+        for dataidx in range(226):
+            StateArray.append(float(dataArray[dataidx]))
+        for dataidx in range(226,229):
+            GoalArray.append(float(dataArray[dataidx]))
 
-    states = np.array(StateArray)
-    goals = np.array(GoalArray)
-    return states, goals
+        states = np.array(StateArray)
+        goals = np.array(GoalArray)
+        return states, goals
+    else:
+        needNewAction = False
+        return np.array(0), np.array(0)
+
 
 
 def convert_data_to_string(data):
@@ -40,7 +48,7 @@ def convert_data_to_string(data):
         data_out += str(i) + " "
     return data_out
 
-
+needNewAction = True
 world = None
 env = None
 HOST = "192.168.0.43"
@@ -54,6 +62,7 @@ def main():
     global world
     global env
     global agentNum
+    global needNewAction
     # Command line arguments
 
     # data = client.recv(data_size)
@@ -87,18 +96,19 @@ def main():
             data = client.recv(data_size)
             data = data.decode("utf-8")
             states, goals = convert_data_to_float(data)
+            world.env.set_action_bool(needNewAction)
+            if(needNewAction):
+                world.env.store_state(agentNum, states)
+                world.env.store_goal(agentNum, goals)
+                world.update(agentNum)
 
-            world.env.store_state(agentNum, states)
-            world.env.store_goal(agentNum, goals)
-            world.update(agentNum)
-
-            action = world.env.set_unreal_action(agentNum)
-            # if(tempNum!=agentNum):
-            #     action = np.zeros(226)
-            #     tempNum = agentNum
-            action = convert_data_to_string(action)
-            action = bytes(action, 'utf-8')
-            client.send(action)
+                action = world.env.set_unreal_action(agentNum)
+                # if(tempNum!=agentNum):
+                #     action = np.zeros(226)
+                #     tempNum = agentNum
+                action = convert_data_to_string(action)
+                action = bytes(action, 'utf-8')
+                client.send(action)
     except:
         server.close()
         main()

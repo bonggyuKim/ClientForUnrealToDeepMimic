@@ -137,11 +137,11 @@ class UnrealEnv(Env):
     def get_num_agents(self):
         return 1
 
-    def set_action_bool(self, time):
-        self.need_action = True
+    def set_action_bool(self, need):
+        self.need_action = need
 
     def need_new_action(self, agent_id):
-        return True
+        return self.need_action
 
     def record_state(self, agent_id):
         return self.state
