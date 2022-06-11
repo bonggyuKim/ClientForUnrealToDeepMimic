@@ -70,9 +70,10 @@ def main():
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
     policy = ['socket/run_amp_heading_humanoid3d_locomotion_args.txt', 'socket/run_amp_humanoid3d_roll_args.txt']
-    arg_parser1 = build_arg_parser(policy[0])
-    arg_parser2 = build_arg_parser(policy[1])
-    arg_parser = [arg_parser1, arg_parser2]
+    arg_parser = []
+    for i in policy:
+        arg = build_arg_parser(i)
+        arg_parser.append(arg)
     env = UnrealEnv(arg_parser, enable_draw=True)
     world = UnrealRL(env, arg_parser)
     server = socket.socket()
