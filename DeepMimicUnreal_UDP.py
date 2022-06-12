@@ -52,7 +52,7 @@ needNewAction = True
 world = None
 env = None
 HOST = "192.168.0.43"
-PORT = 3001
+PORT = 3000
 data_size = 8000
 
 agentNum = 0
@@ -85,19 +85,15 @@ def main():
         arg_parser.append(arg)
     env = UnrealEnv(arg_parser, enable_draw=True)
     world = UnrealRL(env, arg_parser)
-    server = socket.socket()
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((HOST, PORT))
-    server.listen(1)
     print("Socket Ready")
-    client, address = server.accept()
-    tempNum = 0
     try:
         while 1:
-            data = client.recv(data_size)
-            data = data.decode("utf-8")
+            client, address = server.recvfrom(3001)
+            data = client.decode("utf-8")
             states, goals = convert_data_to_float(data)
             world.env.set_action_bool(needNewAction)
-            print(needNewAction)
             if(needNewAction):
                 world.env.store_state(agentNum, states)
                 world.env.store_goal(agentNum, goals)
@@ -108,8 +104,7 @@ def main():
                 #     action = np.zeros(226)
                 #     tempNum = agentNum
                 action = convert_data_to_string(action)
-                action = bytes(action, 'utf-8')
-                client.send(action)
+                server.sendto(action.encode(), address)
             else:
                 continue
     except:
