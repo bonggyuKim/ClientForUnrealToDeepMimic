@@ -10,10 +10,10 @@ class UnrealEnv(Env):
         super().__init__(args, enable_draw)
 
         self.state_size = 226  # 왜인지는 모르겠지만 콘솔창에 뜸  #드리블은 공추가로 197개
-        self.goal_size = 3  # 왜인지는 모르겠지만 코드에서 이렇게 씀
+        self.goal_size = 0  # 왜인지는 모르겠지만 코드에서 이렇게 씀
         self.action_size = 28  # 왜인지는 모르겠지만 논문에서 이렇게 씀
         self.state = np.array(226)
-        self.goal = np.array(3)
+        self.goal = np.array(0)
         self.action = None
         self.need_action = True
 
@@ -141,7 +141,7 @@ class UnrealEnv(Env):
         self.need_action = need
 
     def need_new_action(self, agent_id):
-        return self.need_action
+        return True
 
     def record_state(self, agent_id):
         return self.state
