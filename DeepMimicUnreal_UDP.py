@@ -51,7 +51,7 @@ def convert_data_to_string(data):
 needNewAction = True
 world = None
 env = None
-HOST = "192.168.0.43"
+HOST = "192.168.0.63"
 PORT = 3000
 data_size = 8000
 
@@ -78,7 +78,7 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['socket/run_amp_humanoid3d_run_args.txt']#, 'socket/run_amp_humanoid3d_roll_args.txt']
+    policy = ['run.txt']#, 'socket/run_amp_humanoid3d_roll_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)
