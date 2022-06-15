@@ -12,7 +12,7 @@
 --enable_char_contact_fall false
 
 --char_ctrls ct_pd
---char_ctrl_files data/controllers/humanoid3d_rot_ctrl.txt
+--char_ctrl_files data/controllers/humanoid3d_ctrl.txt
 --kin_ctrl motion
 --motion_file data/motions/humanoid3d_roll.txt
 --sync_char_root_pos true
@@ -21,4 +21,4 @@
 --agent_files data/agents/ct_agent_humanoid_amp.txt
 --train_agents false
 
---model_files data/policies/humanoid3d_amp/humanoid3d_amp_roll.ckpt
+--model_files socket/policy/agent0_model_80M_roll.ckpt

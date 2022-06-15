@@ -18,9 +18,11 @@ def build_arg_parser(filename):
 
 def convert_data_to_float(data):
     global agentNum
+    global agentBehavior
     global needNewAction
     dataArray = data.split(" ")
 
+    agentBehavior = int(dataArray.pop(0))
     isNeedAction = int(dataArray.pop(0))
     if(isNeedAction):
         needNewAction = True
@@ -51,12 +53,12 @@ def convert_data_to_string(data):
 needNewAction = True
 world = None
 env = None
-HOST = "192.168.0.63"
+HOST = "222.251.137.12"
 PORT = 3000
 data_size = 8000
 
 agentNum = 0
-
+agentBehavior = 0
 
 def main():
     global world
@@ -78,7 +80,8 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['run.txt']#, 'socket/run_amp_humanoid3d_roll_args.txt']
+    policy = ['run.txt', 'socket/run_amp_humanoid3d_jump_args.txt', 'socket/run_amp_humanoid3d_getup_facedown_args.txt',
+              'socket/run_amp_humanoid3d_getup_faceup.txt', 'socket/run_amp_humanoid3d_roll_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)
@@ -88,27 +91,27 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((HOST, PORT))
     print("Socket Ready")
-    try:
-        while 1:
-            client, address = server.recvfrom(3001)
-            data = client.decode("utf-8")
-            states = convert_data_to_float(data)
-            world.env.set_action_bool(needNewAction)
-            if(needNewAction):
-                world.env.store_state(agentNum, states)
-                #world.env.store_goal(agentNum, goals)
-                world.update(agentNum)
-                action = world.env.set_unreal_action(agentNum)
-                # if(tempNum!=agentNum):
-                #     action = np.zeros(226)
-                #     tempNum = agentNum
-                action = convert_data_to_string(action)
-                server.sendto(action.encode(), address)
-            else:
-                continue
-    except:
-        server.close()
-        main()
+    #try:
+    while 1:
+        client, address = server.recvfrom(3001)
+        data = client.decode("utf-8")
+        states = convert_data_to_float(data)
+        world.env.set_action_bool(needNewAction)
+        if(needNewAction):
+            world.env.store_state(agentBehavior, states)
+            #world.env.store_goal(agentNum, goals)
+            world.update(agentBehavior)
+            action = world.env.set_unreal_action(agentBehavior)
+            # if(tempNum!=agentNum):
+            #     action = np.zeros(226)
+            #     tempNum = agentNum
+            action = convert_data_to_string(action)
+            server.sendto(action.encode(), address)
+        else:
+            continue
+    #except:
+        #server.close()
+        #main()
 
 if __name__ == '__main__':
     main()

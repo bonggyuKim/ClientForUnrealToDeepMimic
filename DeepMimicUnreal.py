@@ -18,9 +18,11 @@ def build_arg_parser(filename):
 
 def convert_data_to_float(data):
     global agentNum
+    global agentBehavior
     global needNewAction
     dataArray = data.split(" ")
 
+    agentBehavior = int(dataArray.pop(0))
     isNeedAction = int(dataArray.pop(0))
     if(isNeedAction):
         needNewAction = True
@@ -56,7 +58,7 @@ PORT = 3001
 data_size = 8000
 
 agentNum = 0
-
+agentBehavior = 0
 
 def main():
     global world
@@ -78,7 +80,7 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['socket/run_amp_humanoid3d_run_args.txt']#, 'socket/run_amp_humanoid3d_roll_args.txt']
+    policy = ['socket/run_amp_humanoid3d_run_args.txt', 'socket/run_amp_humanoid3d_jump_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)

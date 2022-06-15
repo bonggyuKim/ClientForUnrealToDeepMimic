@@ -21,4 +21,5 @@
 --agent_files data/agents/ct_agent_humanoid_amp.txt
 --train_agents false
 
---model_files data/policies/humanoid3d_amp/humanoid3d_amp_run.ckpt
+--model_files output/
+#data/policies/humanoid3d_amp/humanoid3d_amp_run.ckpt
