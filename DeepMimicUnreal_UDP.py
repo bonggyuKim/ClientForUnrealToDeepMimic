@@ -80,8 +80,9 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['run.txt', 'socket/run_amp_humanoid3d_jump_args.txt',
-              'socket/run_amp_humanoid3d_roll_args.txt',  'socket/run_amp_humanoid3d_getup_faceup.txt']
+    #policy = ['socket/run_amp_humanoid3d_walk_args.txt', 'socket/run_amp_humanoid3d_jump_args.txt',
+    #          'socket/run_amp_humanoid3d_roll_args.txt',  'socket/run_amp_humanoid3d_getup_faceup.txt', 'socket/run_amp_humanoid3d_walk_args.txt']
+    policy = ['socket/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_spinkick_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)
@@ -91,27 +92,27 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((HOST, PORT))
     print("Socket Ready")
-    #try:
-    while 1:
-        client, address = server.recvfrom(3001)
-        data = client.decode("utf-8")
-        states = convert_data_to_float(data)
-        world.env.set_action_bool(needNewAction)
-        if(needNewAction):
-            world.env.store_state(agentBehavior, states)
-            #world.env.store_goal(agentNum, goals)
-            world.update(agentBehavior)
-            action = world.env.set_unreal_action(agentBehavior)
-            # if(tempNum!=agentNum):
-            #     action = np.zeros(226)
-            #     tempNum = agentNum
-            action = convert_data_to_string(action)
-            server.sendto(action.encode(), address)
-        else:
-            continue
-    #except:
-        #server.close()
-        #main()
+    try:
+        while 1:
+            client, address = server.recvfrom(3001)
+            data = client.decode("utf-8")
+            states = convert_data_to_float(data)
+            world.env.set_action_bool(needNewAction)
+            if(needNewAction):
+                world.env.store_state(agentBehavior, states)
+                #world.env.store_goal(agentNum, goals)
+                world.update(agentBehavior)
+                action = world.env.set_unreal_action(agentBehavior)
+                # if(tempNum!=agentNum):
+                #     action = np.zeros(226)
+                #     tempNum = agentNum
+                action = convert_data_to_string(action)
+                server.sendto(action.encode(), address)
+            else:
+                continue
+    except:
+        server.close()
+        main()
 
 if __name__ == '__main__':
     main()

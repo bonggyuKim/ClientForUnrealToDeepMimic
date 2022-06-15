@@ -21,12 +21,14 @@ def convert_data_to_float(data):
     dataArray = data.split(" ")
     #dataArray.pop(454)
     #print(dataArray)
+    dataArray.pop(0)
+    dataArray.pop(0)
     agentNum.append(int(dataArray.pop(0)))
-    #agentNum.append(int(dataArray.pop(226)))
+    agentNum.append(int(dataArray.pop(226)))
     floatArray = []
     stateSize = 226
 
-    for i in range(0,1):
+    for i in range(0,2):
         for j in range(stateSize):
             floatArray.append((float(dataArray[i*stateSize + j])))
     states = np.array(floatArray)
@@ -54,48 +56,36 @@ def main():
     global env
     global agentNum
 
-    policy = ['args/run_amp_humanoid3d_backflip_args.txt', 'args/run_amp_humanoid3d_roll_args.txt']
+    policy = ['args/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_walk_args.txt']
     arg_parser1 = build_arg_parser(policy[0])
     arg_parser2 = build_arg_parser(policy[1])
     arg_parser = [arg_parser1, arg_parser2]
     env = UnrealEnv(arg_parser, enable_draw=True)
     world = UnrealRL(env, arg_parser)
-    server = socket.socket()
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((HOST, PORT))
-    server.listen(1)
     print("Socket Ready")
-    client, address = server.accept()
-    try:
-        while 1:
-            action = []
-            data = client.recv(data_size)
-            data = data.decode("utf-8")
-            states = convert_data_to_float(data)
+    #try:
+    while 1:
+        client, address = server.recvfrom(30000)
+        action = []
+        data = client.decode("utf-8")
+        states = convert_data_to_float(data)
 
-            world.env.store_state(agentNum[0], states[0:226])
-            start = time.time()
+        world.env.store_state(agentNum[0], states[0:226])
+        world.update(agentNum[0])
+        action.extend(world.env.set_unreal_action(agentNum[0]))
 
-            world.update(agentNum[0])
-            end = time.time()
-            print(start, end)
-            action.extend(world.env.set_unreal_action(agentNum[0]))
-            #world.env.store_state(agentNum[1], states[226:])
+        world.env.store_state(agentNum[1], states[226:])
+        world.update(agentNum[1])
+        action.extend(world.env.set_unreal_action(agentNum[1]))
 
-            #world.update(agentNum[1])
+        action = convert_data_to_string(action)
+        server.sendto(action.encode(), address)
 
-            #action.extend(world.env.set_unreal_action(agentNum[1]))
-
-            action = convert_data_to_string(action)
-            #print(action)
-
-            action = bytes(action, 'utf-8')
-
-            client.send(action)
-            print("Ffdsafdsafsdafasdfsadfsafsafsadf")
-
-    except:
-        server.close()
-        main()
+    #except:
+        #server.close()
+        #main()
 
 if __name__ == '__main__':
     main()
