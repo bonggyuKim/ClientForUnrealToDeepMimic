@@ -12,7 +12,7 @@
 --fall_contact_bodies 0 1 2 3 4 6 7 8 9 10 12 13 14
 
 --char_ctrls ct_pd
---char_ctrl_files data/controllers/humanoid3d_ctrl.txt
+--char_ctrl_files data/controllers/humanoid3d_rot_ctrl.txt
 --kin_ctrl motion
 --motion_file data/motions/humanoid3d_backflip.txt
 --sync_char_root_pos true
@@ -21,4 +21,4 @@
 --agent_files data/agents/ct_agent_humanoid_amp.txt
 --train_agents false
 
---model_files socket/policy/agent0_model.ckpt
+--model_files socket/policy/humanoid3d_amp_backflip.ckpt

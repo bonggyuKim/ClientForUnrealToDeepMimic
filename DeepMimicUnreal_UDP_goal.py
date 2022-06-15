@@ -29,18 +29,18 @@ def convert_data_to_float(data):
         agentNum = int(dataArray.pop(0))
 
         StateArray = []
-        #GoalArray = []
+        GoalArray = []
         for dataidx in range(226):
             StateArray.append(float(dataArray[dataidx]))
-        #for dataidx in range(226,229):
-            #GoalArray.append(float(dataArray[dataidx]))
+        for dataidx in range(226,229):
+            GoalArray.append(float(dataArray[dataidx]))
 
         states = np.array(StateArray)
-        #goals = np.array(GoalArray)
-        return states#, goals
+        goals = np.array(GoalArray)
+        return states, goals
     else:
         needNewAction = False
-        return np.array(0)#, np.array(0)
+        return np.array(0), np.array(0)
 
 
 
@@ -80,14 +80,14 @@ def main():
     #     policy = policyList[3]
     policyList = ['backflip', 'crawl', 'run', 'jump', 'sword_model', 'run_amp_humanoid3d_sideflip_args']
 
-    policy = ['run.txt', 'socket/run_amp_humanoid3d_jump_args.txt',
-              'socket/run_amp_humanoid3d_roll_args.txt',  'socket/run_amp_humanoid3d_getup_faceup.txt']
+    policy = ['socket/run_amp_heading_humanoid3d_locomotion_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)
         arg_parser.append(arg)
     env = UnrealEnv(arg_parser, enable_draw=True)
     world = UnrealRL(env, arg_parser)
+    world.env.set_goal_size(agentBehavior, 3)
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server.bind((HOST, PORT))
     print("Socket Ready")
@@ -95,10 +95,12 @@ def main():
     while 1:
         client, address = server.recvfrom(3001)
         data = client.decode("utf-8")
-        states = convert_data_to_float(data)
+        states, goals = convert_data_to_float(data)
         world.env.set_action_bool(needNewAction)
         if(needNewAction):
+
             world.env.store_state(agentBehavior, states)
+            world.env.store_goal(agentBehavior, goals)
             #world.env.store_goal(agentNum, goals)
             world.update(agentBehavior)
             action = world.env.set_unreal_action(agentBehavior)
