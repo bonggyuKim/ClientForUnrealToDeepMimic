@@ -57,7 +57,8 @@ def main():
     global env
     global agentNum
     global agentBehavior
-    policy = ['args/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_spinkick_args.txt']
+    policy = ['args/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_idle_args.txt', 'args/run_amp_humanoid3d_spinkick_args.txt',
+              'args/run_amp_humanoid3d_roll_args.txt','socket/run_amp_humanoid3d_getup_faceup.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)

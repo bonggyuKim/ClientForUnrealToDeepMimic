@@ -23,24 +23,19 @@ def convert_data_to_float(data):
     dataArray = data.split(" ")
 
     agentBehavior = int(dataArray.pop(0))
-    isNeedAction = int(dataArray.pop(0))
-    if(isNeedAction):
-        needNewAction = True
-        agentNum = int(dataArray.pop(0))
+    needNewAction = True
+    agentNum = int(dataArray.pop(0))
 
-        StateArray = []
-        #GoalArray = []
-        for dataidx in range(226):
-            StateArray.append(float(dataArray[dataidx]))
-        #for dataidx in range(226,229):
-            #GoalArray.append(float(dataArray[dataidx]))
+    StateArray = []
+    #GoalArray = []
+    for dataidx in range(226):
+        StateArray.append(float(dataArray[dataidx]))
+    #for dataidx in range(226,229):
+        #GoalArray.append(float(dataArray[dataidx]))
 
-        states = np.array(StateArray)
-        #goals = np.array(GoalArray)
-        return states#, goals
-    else:
-        needNewAction = False
-        return np.array(0)#, np.array(0)
+    states = np.array(StateArray)
+    #goals = np.array(GoalArray)
+    return states#, goals
 
 
 
@@ -50,7 +45,6 @@ def convert_data_to_string(data):
         data_out += str(i) + " "
     return data_out
 
-needNewAction = True
 world = None
 env = None
 HOST = "192.168.0.43"
@@ -64,7 +58,6 @@ def main():
     global world
     global env
     global agentNum
-    global needNewAction
     # Command line arguments
 
     # data = client.recv(data_size)
@@ -82,7 +75,7 @@ def main():
 
     #policy = ['socket/run_amp_humanoid3d_walk_args.txt', 'socket/run_amp_humanoid3d_jump_args.txt',
     #          'socket/run_amp_humanoid3d_roll_args.txt',  'socket/run_amp_humanoid3d_getup_faceup.txt', 'socket/run_amp_humanoid3d_walk_args.txt']
-    policy = ['socket/run_amp_humanoid3d_walk_args.txt', 'args/run_amp_humanoid3d_spinkick_args.txt']
+    policy = ['args/run_amp_humanoid3d_run_args.txt', 'socket/run_amp_humanoid3d_jump_args.txt']
     arg_parser = []
     for i in policy:
         arg = build_arg_parser(i)
@@ -98,18 +91,15 @@ def main():
             data = client.decode("utf-8")
             states = convert_data_to_float(data)
             world.env.set_action_bool(needNewAction)
-            if(needNewAction):
-                world.env.store_state(agentBehavior, states)
-                #world.env.store_goal(agentNum, goals)
-                world.update(agentBehavior)
-                action = world.env.set_unreal_action(agentBehavior)
-                # if(tempNum!=agentNum):
-                #     action = np.zeros(226)
-                #     tempNum = agentNum
-                action = convert_data_to_string(action)
-                server.sendto(action.encode(), address)
-            else:
-                continue
+            world.env.store_state(agentBehavior, states)
+            #world.env.store_goal(agentNum, goals)
+            world.update(agentBehavior)
+            action = world.env.set_unreal_action(agentBehavior)
+            # if(tempNum!=agentNum):
+            #     action = np.zeros(226)
+            #     tempNum = agentNum
+            action = convert_data_to_string(action)
+            server.sendto(action.encode(), address)
     except:
         server.close()
         main()
